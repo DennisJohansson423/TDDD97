@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Twidder</title>
+    
+    <link href="static/client.css" type="text/css" rel="stylesheet">
+    <script src="static/client.js" type="text/javascript"></script>
+
+    <script type="text/view" id="welcomeview">
+        <div class="welcome-container">
+            <div class="welcome-left">
+                <img src="static/wimage.png" alt="Twidder Logo" class="logo">
+            </div>
+
+            <div class="welcome-right">
+                <div class="login-box">
+                    <h3>Log in</h3>
+                    <div id="signin_message" class="message-area" style="text-align: right;"></div>
+                    <form onsubmit="validateSignIn(); return false;">
+                        <div class="input-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <div class="button-row">
+                            <button type="submit" id="loginButton">Login</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="signup-box">
+                    <h3>Sign up</h3>
+                    <div id="signup_message" class="message-area" style="text-align: right;"></div>
+                    <form onsubmit="validateSignUp(); return false;">
+                        <div class="input-group">
+                            <label for="signupFirstname">First name</label>
+                            <input type="text" id="signupFirstname" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signupFamilyname">Family name</label>
+                            <input type="text" id="signupFamilyname" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signupGender">Gender</label>
+                            <select id="signupGender">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="signupCity">City</label>
+                            <input type="text" id="signupCity" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signupCountry">Country</label>
+                            <input type="text" id="signupCountry" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signupEmail">Email</label>
+                            <input type="email" id="signupEmail" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signupPassword">Password</label>
+                            <input type="password" id="signupPassword" required minlength="8">
+                        </div>
+                        <div class="input-group">
+                            <label for="signupRepeatPassword">Repeat password</label>
+                            <input type="password" id="signupRepeatPassword" required minlength="8">
+                        </div>
+                        <div class="button-row">
+                            <button type="submit" id="signupButton">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/view" id="profileview">
+        <div class="profile-container">
+            <div class="tab-bar">
+                <button class="tab-button active" id="tabButtonHome" onclick="openTab('homePanel', 'tabButtonHome')">Home</button>
+                <button class="tab-button" id="tabButtonBrowse" onclick="openTab('browsePanel', 'tabButtonBrowse')">Browse</button>
+                <button class="tab-button" id="tabButtonAccount" onclick="openTab('accountPanel', 'tabButtonAccount')">Account</button>
+            </div>
+
+            <div id="homePanel" class="tab-content" style="display: block;">
+                <h2>Home</h2>
+                <div class="user-info-box">
+                    <h3>Personal Information</h3>
+                    <p><strong>Name:</strong> <span id="displayFirstname"></span> <span id="displayFamilyname"></span></p>
+                    <p><strong>Email:</strong> <span id="displayEmail"></span></p>
+                    <p><strong>City:</strong> <span id="displayCity"></span></p>
+                    <p><strong>Country:</strong> <span id="displayCountry"></span></p>
+                </div>
+
+                <div class="wall-section">
+                    <h3>My Wall</h3>
+                    <div class="post-area">
+                        <textarea id="homeWallInput" placeholder="Write on your wall..."></textarea>
+                        <button onclick="postToHomeWall()">Post</button>
+                        <button onclick="reloadWall()">Refresh</button>
+                    </div>
+                    <div id="homeWallMessages" class="messages-list"></div>
+                </div>
+            </div>
+
+            <div id="browsePanel" class="tab-content" style="display: none;">
+                <h2>Browse</h2>
+                <div class="browse-search">
+                    <label>Email:</label>
+                    <input type="email" id="browseEmail" required>
+                    <button type="button" onclick="browseUser()">Search</button>
+                    <div id="browse_error_message" class="message-area" style="color:red;"></div>
+                </div>
+                
+                <div id="browseResult" style="display:none;">
+                    <div class="user-info-box">
+                        <h3>User Information</h3>
+                        <p><strong>Name:</strong> <span id="browseFirstname"></span> <span id="browseFamilyname"></span></p>
+                        <p><strong>Email:</strong> <span id="browseEmailDisplay"></span></p>
+                        <p><strong>City:</strong> <span id="browseCity"></span></p>
+                        <p><strong>Country:</strong> <span id="browseCountry"></span></p>
+                    </div>
+                    <div class="wall-section">
+                        <h3>User Wall</h3>
+                        <div class="post-area">
+                            <textarea id="browseWallInput" placeholder="Write on their wall..."></textarea>
+                            <button onclick="postToBrowseWall()">Post</button>
+                            <button onclick="reloadWall(document.getElementById('browseEmailDisplay').innerText)">Refresh</button>
+                        </div>
+                        <div id="browseWallMessages" class="messages-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="accountPanel" class="tab-content" style="display: none;">
+                <h2>Account</h2>
+                <fieldset>
+                    <legend>Change Password</legend>
+                    <div id="password_message" class="message-area"></div>
+                    <form onsubmit="changePassword(); return false;">
+                        <div class="input-group">
+                            <label>Old Password:</label>
+                            <input type="password" id="oldPassword" required>
+                        </div>
+                        <div class="input-group">
+                            <label>New Password:</label>
+                            <input type="password" id="newPassword" required minlength="6">
+                        </div>
+                        <div class="input-group">
+                            <label>Repeat New:</label>
+                            <input type="password" id="repeatNewPassword" required minlength="6">
+                        </div>
+                        <div class="button-row">
+                            <button type="submit">Change Password</button>
+                        </div>
+                    </form>
+                </fieldset>
+                <div class="logout-section">
+                    <button onclick="logout()" class="logout-button">Log out</button>
+                </div>
+            </div>
+        </div>
+</script>
+</head>
+<body>
+    <div id="content"></div>
+</body>
+</html>
